@@ -503,7 +503,7 @@ def main () :
     cmd.add_argument \
         ( '--ssl-noverify'
         , help     = 'Skip SSL verification default="%(default)s"'
-        , default  = cfg.get("ssl-noverify", "SSL_NOVERIFY")
+        , default  = cfg.get('ssl_noverify', 'false')
         , required = False
         )
     cmd.add_argument \
