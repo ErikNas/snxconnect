@@ -589,6 +589,7 @@ def main () :
                 args.password = pw
         if not args.password :
             args.password = getpass ('Password: ')
+    print ("snxconnect version %s by Ralf Schlatterbeck" % VERSION)
     rq = HTML_Requester (args)
     result = rq.login ()
     if result :
