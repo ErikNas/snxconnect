@@ -1,8 +1,8 @@
 # To use this Makefile, get a copy of my SF Release Tools
-# git clone git://git.code.sf.net/p/sfreleasetools/code sfreleasetools
+# git clone git://git.code.sf.net/p/sfreleasetools/code releasetools
 # And point the environment variable RELEASETOOLS to the checkout
 ifeq (,${RELEASETOOLS})
-    RELEASETOOLS=../releasetools
+    RELEASETOOLS=./releasetools
 endif
 LASTRELEASE:=$(shell $(RELEASETOOLS)/lastrelease -n)
 VERSIONPY=snxvpnversion.py
@@ -31,4 +31,4 @@ clean:
 	rm -rf dist build upload upload_homepage ReleaseNotes.txt
 	rm -rf __pycache__
 
-include $(RELEASETOOLS)/Makefile-sf
+include $(RELEASETOOLS)/Makefile-pyrelease
