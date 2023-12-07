@@ -23,7 +23,7 @@
 from snxvpnversion import VERSION
 
 from distutils.core import setup, Extension
-from sys import exit, version_info
+import sys
 
 if sys.version_info < (3,4):
     sys.exit('Sorry, Python < 3.4 is not supported!')
