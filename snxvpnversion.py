@@ -1,1 +1,1 @@
-VERSION="1.5.2+4.gab18869"
+VERSION="1.5.2.post7"
