@@ -139,9 +139,9 @@ class HTML_Requester (object) :
                 sys.stdout.write(str(datetime.timedelta(seconds=remaining)))
                 remaining = remaining -1
                 if remaining == 600:
-                    self.gnome_notify("Осталось 10 минут")
+                    self.gnome_notify("10 minutes remain")
                 if remaining < 1:
-                    self.gnome_notify("Время сессии вышло")
+                    self.gnome_notify("Session time has expired")
                     raise KeyboardInterrupt("Time is out")
                     break
                 sys.stdout.flush()
@@ -163,7 +163,7 @@ class HTML_Requester (object) :
         try :
             obj = dbus.SessionBus().get_object("org.freedesktop.Notifications", "/org/freedesktop/Notifications")
             obj = dbus.Interface(obj, "org.freedesktop.Notifications")
-            obj.Notify("", 0, "", "Уведомление SNX", msg, [], {"urgency": 1}, 10000)
+            obj.Notify("", 0, "", "SNX Notification", msg, [], {"urgency": 1}, 10000)
         except Exception as e:
             print("Notify error", e)
     #end def gnome_notify
