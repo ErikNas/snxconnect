@@ -97,6 +97,21 @@ class HTML_Requester (object) :
         self.nextfile = args.file
     # end def __init__
 
+    def print_snx_version (self) :
+        """ Print snx binary build version. Get build version
+            from stdout after call it with the 'usage' option.
+        """
+        sp  = self.args.snxpath
+        self.debug(sp)
+        snx = Popen ([sp, 'usage'], stdin = PIPE, stdout = PIPE, stderr = PIPE, universal_newlines = True)
+        stdout, stderr = snx.communicate ('')
+        for line in stdout.splitlines() :
+            line = line.strip ()
+            if 'build' in line :
+                print ("Use '%s': Check Point's Linux SNX (%s)" % (sp, line))
+                return
+    # end def print_snx_version
+
     def call_snx (self) :
         """ The snx binary usually lives in the default snxpath and is
             setuid root. We call it with the undocumented '-Z' option.
@@ -591,6 +606,7 @@ def main () :
             args.password = getpass ('Password: ')
     print ("snxconnect version %s by Ralf Schlatterbeck" % VERSION)
     rq = HTML_Requester (args)
+    rq.print_snx_version ()
     result = rq.login ()
     if result :
         rq.call_snx ()
