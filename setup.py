@@ -23,6 +23,11 @@
 from snxvpnversion import VERSION
 
 from distutils.core import setup, Extension
+from sys import exit, version_info
+
+if sys.version_info < (3,4):
+    sys.exit('Sorry, Python < 3.4 is not supported!')
+
 license = 'BSD License'
 
 description = []
@@ -39,8 +44,10 @@ setup \
         "Command-line utility to connect to a Checkpoint SSL VPN "
     , long_description = ''.join (description)
     , license          = license
+    , author           = "Ralf Schlatterbeck"
+    , author_email     = "rsc@runtux.com"
     , platforms        = 'Linux'
-    , url              = "https://github.com/dimastbk/snxvpn"
+    , url              = "https://github.com/sergey-belikov/snxvpn"
     , scripts          = ['snxconnect']
     , install_requires = [ 'bs4', 'pycrypto', 'lxml', 'rsa' ]
     , classifiers      = \
@@ -52,10 +59,14 @@ setup \
         , 'Intended Audience :: Science/Research'
         , 'Intended Audience :: Information Technology'
         , 'Intended Audience :: System Administrators'
-        , 'Programming Language :: Python :: 2.7'
         , 'Programming Language :: Python :: 3.4'
         , 'Programming Language :: Python :: 3.5'
         , 'Programming Language :: Python :: 3.6'
+        , 'Programming Language :: Python :: 3.7'
+        , 'Programming Language :: Python :: 3.8'
+        , 'Programming Language :: Python :: 3.9'
+        , 'Programming Language :: Python :: 3.10'
+        , 'Programming Language :: Python :: 3.11'
         ]
     )
 
