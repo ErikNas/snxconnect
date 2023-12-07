@@ -459,7 +459,7 @@ def main () :
     if cfgf :
         for line in cfgf :
             line = line.strip ().decode ('utf-8')
-            if line.startswith ('#') :
+            if len(line) == 0 or line.startswith ('#') :
                 continue
             k, v = line.split (None, 1)
             if k == 'server' :
