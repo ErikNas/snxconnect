@@ -283,17 +283,17 @@ class HTML_Requester (object) :
                 otp = self.args.otp_pin
             else:
                 otp = getpass ('One-time Password: ')
-            self.debug ("OTP: %s" % otp)            
+            self.debug ("OTP: %s" % otp)
             otp =  rsa.pkcs1.encrypt(otp.encode('UTF-8'), rsa.PublicKey(self.modulus, self.exponent))
             otp = ''.join ('%02x' % b_ord (c) for c in reversed (otp))
             d ['password'] = otp
-            d ['pin']      = self.args.vpid_prefix            
+            d ['pin']      = self.args.vpid_prefix
             self.debug ("nextfile: %s" % self.nextfile)
             self.debug ("purl: %s" % self.purl)
-            self.debug ("D  %s" % urlencode(d))            
+            self.debug ("D  %s" % urlencode(d))
             self.open (data = urlencode (d))
             self.debug ("info: %s" % self.info)
-            self.debug ("purl2: %s" % self.purl)            
+            self.debug ("purl2: %s" % self.purl)
             whileCount += 1
             if whileCount > CHALLENGE_MAX_COUNT:
                 print("Error: too many attempts")
@@ -302,7 +302,7 @@ class HTML_Requester (object) :
         if self.purl.endswith ('Login/ActivateLogin') :
             print('Closing previous connection')
             self.open  ('sslvpn/Login/ActivateLogin?ActivateLogin=activate')
-        
+
         if self.purl.endswith ('Portal/Main') :
             if self.args.save_cookies :
                 self.jar.save (self.args.cookiefile, ignore_discard = True)
