@@ -50,6 +50,7 @@ automagically if you install via ``pip3``:
 - pure-Python RSA implementation (``python3-rsa`` Debian package)
 
 ::
+
  sudo apt install python3-bs4 python3-pycryptodome python3-rsa
 
 After installation you should be able to run ``snxconnect --help`` to
