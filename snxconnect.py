@@ -150,7 +150,7 @@ class HTML_Requester (object) :
         try:
             while True:
                 #time.sleep(4000000)
-                sys.stdout.write("\r")
+                sys.stdout.write("\r                    \r") # carriage return + clean line
                 sys.stdout.write(str(datetime.timedelta(seconds=remaining)))
                 remaining = remaining -1
                 if remaining == 600:

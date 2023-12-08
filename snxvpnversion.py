@@ -1,1 +1,1 @@
-VERSION="1.5.2.post10"
+VERSION="1.5.2.post11"
