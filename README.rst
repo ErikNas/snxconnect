@@ -38,16 +38,19 @@ make it work.
 Install and Run
 ---------------
 
-Install via ``pip`` is the preferred way (replace ``pip`` with ``pip3``
-if you want to install for python3)::
+Install via ``pip3`` is the preferred way::
 
- pip install snxvpn
+ pip3 install snxvpn-fix
 
 The following dependencies are needed but should be picked up
-automagically if you install via ``pip``:
+automagically if you install via ``pip3``:
 
-- Beautiful Soup version 4 (``python-bs4`` Debian package)
-- pycrypto (``python-crypto`` Debian package)
+- Beautiful Soup version 4 (``python3-bs4`` Debian package)
+- PyCryptodome, a fork of PyCrypto (``python3-pycryptodome`` Debian package)
+- pure-Python RSA implementation (``python3-rsa`` Debian package)
+
+::
+ sudo apt install python3-bs4 python3-pycryptodome python3-rsa
 
 After installation you should be able to run ``snxconnect --help`` to
 find out about options. At least a host, and username must be given,

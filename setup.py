@@ -37,7 +37,7 @@ for line in f :
 f.close ()
 
 setup \
-    ( name             = "snxvpn_fix"
+    ( name             = "snxvpn-fix"
     , py_modules       = ['snxconnect', 'snxvpnversion']
     , version          = VERSION
     , description      =
@@ -49,7 +49,7 @@ setup \
     , platforms        = 'Linux'
     , url              = "https://github.com/sergey-belikov/snxvpn"
     , scripts          = ['snxconnect']
-    , install_requires = [ 'bs4', 'pycrypto', 'lxml', 'rsa' ]
+    , install_requires = [ 'bs4', 'pycryptodome', 'lxml', 'rsa' ]
     , classifiers      = \
         [ 'Development Status :: 3 - Alpha'
         , 'License :: OSI Approved :: ' + license
