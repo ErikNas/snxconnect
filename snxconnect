@@ -2,4 +2,4 @@
 
 from snxconnect import main
 
-main ()
+main()

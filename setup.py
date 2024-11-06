@@ -20,53 +20,52 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 # ****************************************************************************
 
+import sys
+from distutils.core import setup
+
 from snxvpnversion import VERSION
 
-from distutils.core import setup, Extension
-import sys
-
-if sys.version_info < (3,4):
+if sys.version_info < (3, 4):
     sys.exit('Sorry, Python < 3.4 is not supported!')
 
 license = 'BSD License'
 
 description = []
-f = open ('README.rst')
-for line in f :
-    description.append (line)
-f.close ()
+f = open('README_en.rst')
+for line in f:
+    description.append(line)
+f.close()
 
 setup \
-    ( name             = "snxvpn_fix"
-    , py_modules       = ['snxconnect', 'snxvpnversion']
-    , version          = VERSION
-    , description      =
-        "Command-line utility to connect to a Checkpoint SSL VPN "
-    , long_description = ''.join (description)
-    , license          = license
-    , author           = "Ralf Schlatterbeck"
-    , author_email     = "rsc@runtux.com"
-    , platforms        = 'Linux'
-    , url              = "https://github.com/sergey-belikov/snxvpn"
-    , scripts          = ['snxconnect']
-    , install_requires = [ 'bs4', 'pycryptodome', 'lxml', 'rsa' ]
-    , classifiers      = \
-        [ 'Development Status :: 3 - Alpha'
-        , 'License :: OSI Approved :: ' + license
-        , 'Operating System :: POSIX :: Linux'
-        , 'Programming Language :: Python'
-        , 'Intended Audience :: Developers'
-        , 'Intended Audience :: Science/Research'
-        , 'Intended Audience :: Information Technology'
-        , 'Intended Audience :: System Administrators'
-        , 'Programming Language :: Python :: 3.4'
-        , 'Programming Language :: Python :: 3.5'
-        , 'Programming Language :: Python :: 3.6'
-        , 'Programming Language :: Python :: 3.7'
-        , 'Programming Language :: Python :: 3.8'
-        , 'Programming Language :: Python :: 3.9'
-        , 'Programming Language :: Python :: 3.10'
-        , 'Programming Language :: Python :: 3.11'
-        ]
-    )
-
+    (name="snxvpn_rtkit"
+     , py_modules=['snxconnect', 'snxvpnversion']
+     , version=VERSION
+     , description=
+     "Command-line utility to connect to a Checkpoint SSL VPN "
+     , long_description=''.join(description)
+     , license=license
+     , author="Ralf Schlatterbeck"
+     , author_email="rsc@runtux.com"
+     , platforms='Linux'
+     , url="https://github.com/sergey-belikov/snxvpn"
+     , scripts=['snxconnect']
+     , install_requires=['bs4', 'pycryptodome', 'lxml', 'rsa']
+     , classifiers= \
+         ['Development Status :: 3 - Alpha'
+             , 'License :: OSI Approved :: ' + license
+             , 'Operating System :: POSIX :: Linux'
+             , 'Programming Language :: Python'
+             , 'Intended Audience :: Developers'
+             , 'Intended Audience :: Science/Research'
+             , 'Intended Audience :: Information Technology'
+             , 'Intended Audience :: System Administrators'
+             , 'Programming Language :: Python :: 3.4'
+             , 'Programming Language :: Python :: 3.5'
+             , 'Programming Language :: Python :: 3.6'
+             , 'Programming Language :: Python :: 3.7'
+             , 'Programming Language :: Python :: 3.8'
+             , 'Programming Language :: Python :: 3.9'
+             , 'Programming Language :: Python :: 3.10'
+             , 'Programming Language :: Python :: 3.11'
+          ]
+     )
