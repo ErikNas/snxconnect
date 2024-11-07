@@ -25,31 +25,45 @@ from argparse import ArgumentParser
 from netrc import netrc, NetrcParseError
 from snxvpnversion import VERSION
 
+BOOL_OPTS = ['debug', 'save_cookies']
+
 
 def parse_config_file(home):
-    cfg = {}
+    config = {}
+    config_file = get_config_file(home)
+    if config_file:
+        parse_config_lines(config_file, config)
+    return config
 
-    cfgf = None
-    if home:
-        try:
-            cfgf = open(os.path.join(home, '.snxvpnrc'), 'rb')
-        except (OSError, IOError):
-            pass
-    bool_opts = ['debug', 'save_cookies']
-    if cfgf:
-        for line in cfgf:
-            line = line.strip().decode('utf-8')
-            if len(line) == 0 or line.startswith('#'):
-                continue
-            k, v = line.split(None, 1)
-            if k == 'server':
-                k = 'host'
-            k = k.replace('-', '_')
-            if k in bool_opts:
-                v = (v.lower() in ('true', 'yes'))
-            cfg[k] = v
 
-    return cfg
+def get_config_file(home):
+    try:
+        return open(os.path.join(home, '.snxvpnrc'), 'rb')
+    except (OSError, IOError):
+        return None
+
+
+def parse_config_lines(config_file, config):
+    for line in config_file:
+        line = line.strip().decode('utf-8')
+        if not line or line.startswith('#'):
+            continue
+        key, value = line.split(None, 1)
+        key = convert_key(key)
+        value = convert_value(key, value)
+        config[key] = value
+
+
+def convert_key(key):
+    if key == 'server':
+        return 'host'
+    return key.replace('-', '_')
+
+
+def convert_value(key, value):
+    if key in BOOL_OPTS:
+        return value.lower() in ('true', 'yes')
+    return value
 
 
 def parse_args(cfg, home):
@@ -165,21 +179,22 @@ def print_version_and_exit(args):
 
 def check_username_and_password(args):
     if not args.username or not args.password:
-        n = a = None
-        try:
-            n = netrc()
-        except (IOError, NetrcParseError):
-            pass
-        if n:
-            a = n.authenticators(args.host)
-        if a:
-            username, _, password = a
-            if not args.username:
-                args.username = username
-            if not args.password:
-                args.password = password
+        authenticators = get_authenticators(args.host)
+        if authenticators:
+            args.username = args.username or authenticators[0]
+            args.password = args.password or authenticators[2]
         if not args.password:
             args.password = getpass('Password: ')
+
+
+def get_authenticators(host):
+    """Возвращает кортеж (user, account, password)
+    для переданного значения host."""
+    try:
+        netrc_instance = netrc()
+        return netrc_instance.authenticators(host)
+    except (IOError, NetrcParseError):
+        return None
 
 
 def connect(args):

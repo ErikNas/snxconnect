@@ -1,8 +1,5 @@
 from __future__ import print_function, unicode_literals
 
-import datetime
-import os
-import os.path
 import socket
 import ssl
 import subprocess
@@ -27,6 +24,7 @@ from bs4 import BeautifulSoup
 from getpass import getpass
 from struct import pack, unpack
 from subprocess import Popen, PIPE
+from datetime import timedelta
 
 CHALLENGE_MAX_COUNT = 5
 
@@ -36,7 +34,7 @@ class Requester(object):
     def __init__(self, args):
         self.modulus = None
         self.exponent = None
-        self.timeout = None
+        self.timeout = 60 * 60  # 1 hour timeout
         self.f = None
         self.snx_info = None
         self.soup = None
@@ -62,17 +60,18 @@ class Requester(object):
         self.nextfile = args.file
 
     def print_snx_version(self):
-        """ Print snx binary build version. Get build version
-            from stdout after call it with the 'usage' option.
+        """ Выводит на экран установленную версию snx.
+        SNX не имеет флага для получения версии, поэтому вместо флага используется слово 'usage'.
+        Далее просто парсится результат вывода в консоль.
         """
-        sp = self.args.snxpath
-        self.print_if_debug(sp)
-        snx = Popen([sp, 'usage'], stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+        snx_path = self.args.snxpath
+        self.print_if_debug(snx_path)
+        snx = Popen([snx_path, 'usage'], stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         stdout, stderr = snx.communicate('')
         for line in stdout.splitlines():
             line = line.strip()
             if 'build' in line:
-                print("Use '%s': Check Point's Linux SNX (%s)" % (sp, line))
+                print("Use '%s': Check Point's Linux SNX (%s)" % (snx_path, line))
                 return
 
     def call_snx(self):
@@ -88,34 +87,55 @@ class Requester(object):
             the socket open, so we do another read to wait for snx to
             terminate.
         """
-        sp = self.args.snxpath
-        self.print_if_debug(sp)
-        if self.args.print_if_debug:
+        snx_path = self.args.snxpath
+        self.print_if_debug(snx_path)
+        if self.args.debug:
             #            snx = Popen (['strace', '-o', 'strace_snx', '-s', '2000', '-p' ,sp, '-Z'], stdin = PIPE, stdout = PIPE, stderr = PIPE)
-            snx = Popen([sp, '-Z'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            snx = Popen([snx_path, '-Z'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         else:
-            snx = Popen([sp, '-Z'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            snx = Popen([snx_path, '-Z'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         stdout, stderr = snx.communicate('')
-        rc = snx.returncode
-        if rc != 0:
-            print("SNX terminated with error: %d %s%s" % (rc, stdout, stderr))
+        return_code = snx.returncode
+        if return_code != 0:
+            print("SNX terminated with error: %d %s%s" % (return_code, stdout, stderr))
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(("127.0.0.1", 7776))
         sock.sendall(self.snx_info)
         answer = sock.recv(4096)
-        if self.args.print_if_debug:
+        if self.args.debug:
             f = open('snxanswer', 'wb')
             f.write(answer)
             f.close()
         print("SNX connected, to leave VPN open, leave this running!")
+        self.wait_for_termination()
+
+    @staticmethod
+    def notify(msg):
+        """
+        Выводит всплывающее уведомление для пользователя.
+        В случае неудачи пытается вывести это сообщение в консоль
+        """
+        try:
+            subprocess.run(['notify-send', 'SNX Notification', msg], check=True)
+        except (OSError, Exception):
+            print("SNX Notification: " + msg)
+
+    def print_if_debug(self, s):
+        """
+        Выводит сообщение в консоль, если включен режим дебага.
+        """
+        if self.args.debug:
+            print(s)
+
+    def wait_for_termination(self):
+        """
+        Waits for the SNX process to terminate, displaying the remaining time.
+        """
         remaining = int(self.timeout)
-        #        remaining = 70
         try:
             while True:
-                # time.sleep(4000000)
-                sys.stdout.write("\r                    \r")  # carriage return + clean line
-                sys.stdout.write(str(datetime.timedelta(seconds=remaining)))
-                remaining = remaining - 1
+                sys.stdout.write(f"\r{str(timedelta(seconds=remaining))}                    \r")
+                remaining -= 1
                 if remaining == 600:
                     self.notify("10 minutes remain")
                 if remaining < 1:
@@ -123,28 +143,11 @@ class Requester(object):
                     raise KeyboardInterrupt("Time is out")
                 sys.stdout.flush()
                 time.sleep(1)
-
-            # answer = sock.recv (4096) # should block until snx dies
         except KeyboardInterrupt:
             sys.stdout.write('\b\b\r')
             sys.stdout.flush()
-            sys.stdout.write("Shutting down ...\n")
-            sys.stdout.flush()
-            try:
-                sys.exit(0)
-            except SystemExit:
-                os._exit(0)
-
-    @staticmethod
-    def notify(msg):
-        try:
-            subprocess.run(['notify-send', 'SNX Notification', msg], check=True)
-        except (OSError, Exception):
-            print("SNX Notification: " + msg)
-
-    def print_if_debug(self, s):
-        if self.args.print_if_debug:
-            print(s)
+            print("Shutting down ...")
+            sys.exit(0)
 
     def generate_snx_info(self):
         """ Communication with SNX (originally by the java framework) is
